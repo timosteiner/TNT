@@ -8,6 +8,7 @@ require_once '../system/config.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email    = trim($_POST['email'] ?? '');
     $password = trim($_POST['password'] ?? '');
+    $lastname = trim($_POST['lastname'] ?? '');
 
     if (!$email || !$password) {
         echo json_encode(["status" => "error", "message" => "Email and password are required"]);
@@ -26,12 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Insert the new user
-    $insert = $pdo->prepare("INSERT INTO users (email, password) VALUES (:email, :pass)");
+    $insert = $pdo->prepare("INSERT INTO users (email, password, lastname) VALUES (:email, :pass, :lastname)");
     $insert->execute([
         ':email' => $email,
-        ':pass'  => $hashedPassword
+        ':pass'  => $hashedPassword,
+        ':lastname' => $lastname
     ]);
 
+    
     echo json_encode(["status" => "success"]);
 } else {
     echo json_encode(["status" => "error", "message" => "Invalid request method"]);
